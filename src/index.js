@@ -1,40 +1,70 @@
-const { GraphQLServer } = require('graphql-yoga')
-const { find } = require('lodash')
+const {
+    GraphQLServer
+} = require('graphql-yoga')
+const {
+    find
+} = require('lodash')
 
-const allUsers = [{id: 'user-123', name: 'David'}, {id: 'user-124', name: 'Noah'}]
+const allUsers = [{
+    id: 'user-123',
+    name: 'David'
+}, {
+    id: 'user-124',
+    name: 'Noah'
+}]
 
 // 1
 const typeDefs = `
-    type Query {
-        users: [User!]!
-        user(id: ID!): User
-    }
+type Query {
+  info: String!
+  feed: [Link!]!
+}
 
-    type Mutation {
-        createUser(name: String!): User!
-    }
+type Link {
+  id: ID!
+  description: String!
+  url: String!
+  translations: [Translation]
+}
 
-    type User {
-        id: ID!
-        name: String!
-    }
+type Translation {
+    language: String!,
+    text: String!
+}
 `
+let links = [{
+    id: 'link-0',
+    url: 'www.howtographql.com',
+    description: 'Fullstack tutorial for GraphQL',
+    translations: [{
+        language: 'en',
+        text: 'hello'
+    },
+    {
+        language: 'de',
+        text: 'Hallo'
+    }
+    ]
+}]
+
+
 // 2
 const resolvers = {
-    
+
     Query: {
-        // info: () => null // `This ist the API of a Hackernews Clone`
-        users: () => allUsers,
-        user: (_, {id}) => {
-            return find(allUsers, ['id', id])
-        }
+        info: () => `This is the API of a Hackernews Clone`,
+        // 2
+        feed: () => links,
     },
-    Mutation: {
-        createUser: (_, {name}) => {
-            console.log('name: ', name);
-            allUsers.push({id: 'user-125', name: name});
-            return {id: 'user-125', name: name}
-        }
+    // 3
+    Link: {
+        id: (parent) => parent.id,
+        description: (parent) => parent.description,
+        url: (parent) => parent.url,
+        translations: (parent) => parent.translations,
+        // translations: (parent) => {
+        //     return [{language:'ko', text: 'Anyoung'}]
+        // }
     }
 }
 

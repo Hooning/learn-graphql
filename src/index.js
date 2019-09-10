@@ -1,31 +1,25 @@
 const { GraphQLServer } = require('graphql-yoga')
 const { findIndex } = require('lodash')
 
-const allUsers = [{
-    id: 'user-123',
-    name: 'David'
-}, {
-    id: 'user-124',
-    name: 'Noah'
-}]
-
 let links = [{
     id: 'link-0',
     url: 'www.howtographql.com',
     description: 'Fullstack tutorial for GraphQL'
+},
+{
+    id: 'link-1',
+    url: 'www.goole.com',
+    description: 'You know google is good'
 }]
 
-// 1
 let idCount = links.length
 
-// 2
 const resolvers = {
     Query: {
         info: () => `This is the API of a Hackernews Clone`,
-        // 2
         feed: () => links,
+        link: (parent, args) => links[findIndex(links, {id: args.id})]
     },
-    // 3
     Link: {
         id: (parent) => parent.id,
         description: (parent) => parent.description,
@@ -47,11 +41,8 @@ const resolvers = {
                 url: args.url,
                 description: args.description
             }
-
-            // Find item index using _.findIndex (thanks @AJ Richardson for comment)
+            
             var index = findIndex(links, {id: args.id});
-
-            // Replace item at index using native splice
             links.splice(index, 1, link);
 
             return link
@@ -66,7 +57,6 @@ const resolvers = {
     }
 }
 
-// 3
 const server = new GraphQLServer({
     typeDefs: './src/schema.graphql',
     resolvers

@@ -38,3 +38,10 @@ query {
     description
   }
 }
+
+query {
+  link(id: "link-0") {
+    id
+    description
+  }
+}

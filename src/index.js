@@ -57,10 +57,11 @@ const resolvers = {
             return link
         },
         deleteLink: (parent, args) => {
+
             var index = findIndex(links, {id: args.id});
             links.splice(index, 1);
 
-            return "Success"
+            return `[${args.id}] is deleted`
         }
     }
 }

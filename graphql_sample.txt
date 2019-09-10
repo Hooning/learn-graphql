@@ -1,0 +1,40 @@
+## post ##
+mutation {
+  post(
+    url: "www.prisma.io"
+    description: "Prisma replaces traditional ORMs"
+  ) {
+    id
+    url
+    description
+  }
+}
+
+## updateLink ##
+mutation {
+  updateLink(
+    id: "link-1"
+    url: "hoontime.com"
+    description: "What a random thing"
+  ) {
+    id
+    url
+    description
+  }
+}
+
+## deleteLink ##
+mutation {
+  deleteLink(
+    id: "link-1"
+  )
+}
+
+## query ##
+query {
+  feed {
+    id
+    url
+    description
+  }
+}

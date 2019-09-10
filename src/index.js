@@ -1,9 +1,5 @@
-const {
-    GraphQLServer
-} = require('graphql-yoga')
-const {
-    find
-} = require('lodash')
+const { GraphQLServer } = require('graphql-yoga')
+const { findIndex } = require('lodash')
 
 const allUsers = [{
     id: 'user-123',
@@ -13,44 +9,17 @@ const allUsers = [{
     name: 'Noah'
 }]
 
-// 1
-const typeDefs = `
-type Query {
-  info: String!
-  feed: [Link!]!
-}
-
-type Link {
-  id: ID!
-  description: String!
-  url: String!
-  translations: [Translation]
-}
-
-type Translation {
-    language: String!,
-    text: String!
-}
-`
 let links = [{
     id: 'link-0',
     url: 'www.howtographql.com',
-    description: 'Fullstack tutorial for GraphQL',
-    translations: [{
-        language: 'en',
-        text: 'hello'
-    },
-    {
-        language: 'de',
-        text: 'Hallo'
-    }
-    ]
+    description: 'Fullstack tutorial for GraphQL'
 }]
 
+// 1
+let idCount = links.length
 
 // 2
 const resolvers = {
-
     Query: {
         info: () => `This is the API of a Hackernews Clone`,
         // 2
@@ -61,16 +30,44 @@ const resolvers = {
         id: (parent) => parent.id,
         description: (parent) => parent.description,
         url: (parent) => parent.url,
-        translations: (parent) => parent.translations,
-        // translations: (parent) => {
-        //     return [{language:'ko', text: 'Anyoung'}]
-        // }
+    },
+    Mutation: {
+        post: (parent, args) => {
+            const link = {
+                id: `link-${idCount++}`,
+                description: args.description,
+                url: args.url,
+            }
+            links.push(link)
+            return link
+        },
+        updateLink: (parent, args) => {
+            const link = {
+                id: args.id,
+                url: args.url,
+                description: args.description
+            }
+
+            // Find item index using _.findIndex (thanks @AJ Richardson for comment)
+            var index = findIndex(links, {id: args.id});
+
+            // Replace item at index using native splice
+            links.splice(index, 1, link);
+
+            return link
+        },
+        deleteLink: (parent, args) => {
+            var index = findIndex(links, {id: args.id});
+            links.splice(index, 1);
+
+            return "Success"
+        }
     }
 }
 
 // 3
 const server = new GraphQLServer({
-    typeDefs,
+    typeDefs: './src/schema.graphql',
     resolvers
 });
 

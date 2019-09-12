@@ -7,9 +7,10 @@ type Query {
 type Mutation {
     post(
       url: String!,
-      description: String!
+      description: String!,
+      translations: [InputTranslation]
       ): Link!
-    updateLink(id: ID!, url: String, description: String): Link
+    updateLink(id: ID!, url: String, description: String, translations: [InputTranslation]): Link
     deleteLink(id: ID!): String
 }
 
@@ -17,4 +18,15 @@ type Link {
   id: ID!
   description: String!
   url: String!
+  translations: [Translation!]!
+}
+
+type Translation {
+  language: String!
+  text: String!
+}
+
+input InputTranslation {
+  language: String!
+  text: String!
 }

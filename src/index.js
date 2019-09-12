@@ -1,15 +1,43 @@
-const { GraphQLServer } = require('graphql-yoga')
+const { GraphQLServer, GraphQLObjectType } = require('graphql-yoga')
 const { findIndex } = require('lodash')
 
 let links = [{
     id: 'link-0',
     url: 'www.howtographql.com',
-    description: 'Fullstack tutorial for GraphQL'
+    description: 'Fullstack tutorial for GraphQL',
+    translations: [
+        {
+            language: "en",
+            text: "Hello"
+        },
+        {
+            language: "de",
+            text: "Hallo"
+        },
+        {
+            language: "ko",
+            text: "안녕"
+        }
+    ]
 },
 {
     id: 'link-1',
     url: 'www.goole.com',
-    description: 'You know google is good'
+    description: 'You know google is good',
+    translations: [
+        {
+            language: "en",
+            text: "Guten Moregen"
+        },
+        {
+            language: "de",
+            text: "Good Morning"
+        },
+        {
+            language: "ko",
+            text: "좋은 아침"
+        }
+    ]
 }]
 
 let idCount = links.length
@@ -24,6 +52,7 @@ const resolvers = {
         id: (parent) => parent.id,
         description: (parent) => parent.description,
         url: (parent) => parent.url,
+        translations: (parent) => parent.translations
     },
     Mutation: {
         post: (parent, args) => {
@@ -31,6 +60,7 @@ const resolvers = {
                 id: `link-${idCount++}`,
                 description: args.description,
                 url: args.url,
+                translations: args.translations
             }
             links.push(link)
             return link
@@ -39,7 +69,8 @@ const resolvers = {
             const link = {
                 id: args.id,
                 url: args.url,
-                description: args.description
+                description: args.description,
+                translations: args.translations
             }
             
             var index = findIndex(links, {id: args.id});
